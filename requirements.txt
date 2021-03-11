@@ -1,0 +1,6 @@
+google-cloud-bigquery
+Flask~=1.1.2
+google~=3.0.0
+simplejson~=3.17.2
+requests~=2.25.1
+klaviyo~=3.0.2

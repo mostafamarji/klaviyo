@@ -14,8 +14,13 @@ os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "sugatan-290314-c08f69990c42.json
 bigquery_client = bigquery.Client()
 dataset_ref = bigquery_client.dataset(dataset)
 
-klaviyo_public_token = "Lms8DK"
-klaviyo_private_token = "pk_047cdab02ed5ee4e56970938d3f8ee8187"
+# sugatan client
+klaviyo_public_token = "Np5mQ8"
+klaviyo_private_token = "pk_180837f7a9ab7e0dc3672c9e56a865c53d"
+
+# new client
+# klaviyo_public_token = "Lms8DK"
+# klaviyo_private_token = "pk_047cdab02ed5ee4e56970938d3f8ee8187"
 client = klaviyo.Klaviyo(public_token=klaviyo_public_token, private_token=klaviyo_private_token)
 
 final_lst = []
@@ -65,8 +70,11 @@ def get_next_data(sincedata, fromdate, todate, requestname):
     table_ref = dataset_ref.table(requestname)
     table = bigquery_client.get_table(table_ref)
 
-    # bounce_email
-    metrics = client.Metrics.get_metric_timeline_by_id("LfJBNg", since=sincedata, sort="desc")
+    # bounce_email client
+    metrics = client.Metrics.get_metric_timeline_by_id("0rG4eQ", since=sincedata, sort="desc")
+
+    # bounce_email client
+    # metrics = client.Metrics.get_metric_timeline_by_id("LfJBNg", since=sincedata, sort="desc")
 
     # click_email
     # metrics = client.Metrics.get_metric_timeline_by_id("MMHziA", since=sincedata, sort="desc")
@@ -914,10 +922,10 @@ def save_bounce_data_big_query(loaded_r, table, fromdate, todate):
 def call_api(requestName):
     # if requestName == "bounce":
 
-    get_next_data("2021/03/23", "2021/03/23", "2021/03/20", "bounce")
+    get_next_data("2020/01/31", "2020/01/31", "2020/01/01", "bounce")
     # get_next_data("2021/03/23", "2021/03/23", "2021/03/20", "click")
     # get_next_data("2021/03/23", "2021/03/23", "2021/03/20", "open")
-    #get_next_data("2021/03/23", "2021/03/23", "2021/03/20", "dropped_email")
+    # get_next_data("2021/03/23", "2021/03/23", "2021/03/20", "dropped_email")
 
     return "done"
 

@@ -15,12 +15,12 @@ bigquery_client = bigquery.Client()
 dataset_ref = bigquery_client.dataset(dataset)
 
 # sugatan client
-klaviyo_public_token = "Np5mQ8"
-klaviyo_private_token = "pk_180837f7a9ab7e0dc3672c9e56a865c53d"
+# klaviyo_public_token = "Np5mQ8"
+# klaviyo_private_token = "pk_180837f7a9ab7e0dc3672c9e56a865c53d"
 
 # new client
-# klaviyo_public_token = "Lms8DK"
-# klaviyo_private_token = "pk_047cdab02ed5ee4e56970938d3f8ee8187"
+klaviyo_public_token = "Lms8DK"
+klaviyo_private_token = "pk_047cdab02ed5ee4e56970938d3f8ee8187"
 client = klaviyo.Klaviyo(public_token=klaviyo_public_token, private_token=klaviyo_private_token)
 
 final_lst = []
@@ -874,7 +874,9 @@ def create_bounce_data_item(i):
 def call_api(requestName):
     # if requestName == "bounce":
 
-    get_metric_data("K8vC8L", "2021/01/31", "2021/01/01", "2021/01/31", "bounce")
+    #client
+    get_metric_data("LfJBNg", "2021/01/31", "2021/01/01", "2021/01/31", "bounce")
+    # get_metric_data("K8vC8L", "2021/01/31", "2021/01/01", "2021/01/31", "bounce")
     # get_next_data("2021/03/23", "2021/03/23", "2021/03/20", "click")
     # get_next_data("2021/03/23", "2021/03/23", "2021/03/20", "open")
     # get_next_data("2021/03/23", "2021/03/23", "2021/03/20", "dropped_email")

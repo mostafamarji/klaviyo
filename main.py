@@ -24,6 +24,7 @@ klaviyo_private_token = "pk_047cdab02ed5ee4e56970938d3f8ee8187"
 client = klaviyo.Klaviyo(public_token=klaviyo_public_token, private_token=klaviyo_private_token)
 
 final_lst = []
+next_data = ""
 
 
 def check_object(dic, item):
@@ -64,7 +65,8 @@ def is_bool(param):
 
 
 def get_metric_data(metrickey, sincedata, fromdate, todate, tablename):
-    global final_lst
+    global final_lst, next_data
+
     try:
         allow_get_next_data = True
         table_ref = dataset_ref.table(tablename)
@@ -96,25 +98,31 @@ def get_metric_data(metrickey, sincedata, fromdate, todate, tablename):
                 if tablename == "bounce":
                     record = create_bounce_data_item(i)
                     final_lst.append(record)
-
             else:
                 allow_get_next_data = False
                 break
 
         if (metrics.data["next"] != "") & (str(metrics.data["next"]).lower() != "none") & allow_get_next_data:
+            result = bigquery_client.insert_rows_json(table, final_lst)
+            print("Data is saved to big query")
+            final_lst = []
             time.sleep(3)
             print("Getting next data")
+            next_data = metrics.data["next"]
             get_metric_data(metrickey, metrics.data["next"], fromdate, todate, tablename)
         else:
-            if len(final_lst) > 0:
-                print(len(final_lst))
-                result = bigquery_client.insert_rows_json(table, final_lst)
-                print(result)
+            # if len(final_lst) > 0:
+            #     print(len(final_lst))
+            #     result = bigquery_client.insert_rows_json(table, final_lst)
+            #     print(result)
             return
     except Exception as e:
         loaded_r = []
         final_lst = []
-        get_metric_data(metrickey, fromdate, fromdate, todate, tablename)
+        if (next_data != "") & (next_data.lower() != "none"):
+            get_metric_data(metrickey, next_data, fromdate, todate, tablename)
+        else:
+            get_metric_data(metrickey, fromdate, fromdate, todate, tablename)
 
 
 # get_table_properties(loaded_r)
@@ -874,8 +882,8 @@ def create_bounce_data_item(i):
 def call_api(requestName):
     # if requestName == "bounce":
 
-    #client
-    get_metric_data("LfJBNg", "2021/01/31", "2021/01/01", "2021/01/31", "bounce")
+    # client
+    get_metric_data("PFknxh", "2021/03/28", "2021/03/27", "2021/03/28", "open")
     # get_metric_data("K8vC8L", "2021/01/31", "2021/01/01", "2021/01/31", "bounce")
     # get_next_data("2021/03/23", "2021/03/23", "2021/03/20", "click")
     # get_next_data("2021/03/23", "2021/03/23", "2021/03/20", "open")

@@ -9,7 +9,7 @@ from google.cloud import bigquery
 
 project_id = 'sugatan-290314'
 dataset = 'Klaviyo'
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "sugatan-290314-c08f69990c42.json"
+# os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "sugatan-290314-c08f69990c42.json"
 
 bigquery_client = bigquery.Client()
 dataset_ref = bigquery_client.dataset(dataset)
@@ -879,7 +879,7 @@ def create_bounce_data_item(i):
     return item
 
 
-def call_api(requestName):
+def call_api():
     # if requestName == "bounce":
 
     # client

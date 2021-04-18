@@ -2,3 +2,4 @@ google-cloud-bigquery
 Flask~=1.1.2
 requests==2.20.0
 klaviyo~=3.0.2
+functions-framework==2.1.2

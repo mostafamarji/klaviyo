@@ -7,10 +7,11 @@ from collections import OrderedDict
 
 import klaviyo
 from google.cloud import bigquery
+import asyncio
 
 project_id = 'sugatan-290314'
 dataset = 'Klaviyo'
-# os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "sugatan-290314-c08f69990c42.json"
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "sugatan-290314-c08f69990c42.json"
 
 bigquery_client = bigquery.Client()
 dataset_ref = bigquery_client.dataset(dataset)
@@ -71,11 +72,11 @@ def get_metric_data(metrickey, sincedata, fromdate, todate, tablename, table):
     try:
         allow_get_next_data = True
         metrics = client.Metrics.get_metric_timeline_by_id(metrickey, since=sincedata, sort="desc")
+        # await asyncio.sleep(1)
         r = json.dumps(metrics.data["data"])
         loaded_r = json.loads(r)
         # print(loaded_r)
         # get_table_properties(loaded_r)
-
         for i in loaded_r:
             record_date = datetime.fromisoformat(i["datetime"]).date()
             from_date = datetime.fromisoformat(fromdate.replace("/", "-")).date()
@@ -129,19 +130,15 @@ def get_metric_data(metrickey, sincedata, fromdate, todate, tablename, table):
         if (metrics.data["next"] != "") & (str(metrics.data["next"]).lower() != "none") & allow_get_next_data:
             final_lst = []
             # time.sleep(3)
-            print("Getting next data")
+            print("Getting next data for " + tablename)
             next_data = metrics.data["next"]
             get_metric_data(metrickey, metrics.data["next"], fromdate, todate, tablename, table)
         else:
-            # if len(final_lst) > 0:
-            #     print(len(final_lst))
-            #     result = bigquery_client.insert_rows_json(table, final_lst)
-            #     print(result)
             return "done"
     except Exception as e:
         final_lst = []
         print("Waiting after exception")
-        # time.sleep(30)
+        time.sleep(30)
         if (next_data != "") & (next_data.lower() != "none"):
             get_metric_data(metrickey, next_data, fromdate, todate, tablename, table)
         else:
@@ -2121,18 +2118,86 @@ def tbl_exists(client, table_ref):
         return False
 
 
-#def call_api():
-def call_api(event, context):
-    table_ref = dataset_ref.table("update_email_preferences")
-    if not tbl_exists(bigquery_client, table_ref):
-        create_table("update_email_preferences")
-    table = bigquery_client.get_table(table_ref)
-
-    # get_metric_data("Q3E8mF", "2021/04/04", "2021/04/03", "2021/04/04", "update_email_preferences", table)
+def call_api(request):
+    # def call_api(event, context):
+    metrics = client.Metrics.get_metrics(count=100)
+    r = json.dumps(metrics.data["data"])
+    loaded_r = json.loads(r)
 
     today = str(datetime.now().date()).replace("-", "/")
     tomorrow = str(datetime.now().date() + timedelta(days=1)).replace("-", "/")
-    get_metric_data("Q3E8mF", tomorrow, today, tomorrow, "update_email_preferences", table)
+    # get_metric_data("MSUv2N", "2021/04/11", "2021/04/10", "2021/04/11", "receive", table)
+
+    for metric in loaded_r:
+        if metric["id"] == "LfJBNg":
+            table_ref = dataset_ref.table("bounce")
+            if not tbl_exists(bigquery_client, table_ref):
+                create_table("bounce")
+            table = bigquery_client.get_table(table_ref)
+            get_metric_data("LfJBNg", tomorrow, today, tomorrow, "bounce", table)
+
+        if metric["id"] == "Ky6Pf6":
+            table_ref = dataset_ref.table("click")
+            if not tbl_exists(bigquery_client, table_ref):
+                create_table("click")
+            table = bigquery_client.get_table(table_ref)
+            get_metric_data("Ky6Pf6", tomorrow, today, tomorrow, "click", table)
+
+        if metric["id"] == "PQAnPe":
+            table_ref = dataset_ref.table("dropped_email")
+            if not tbl_exists(bigquery_client, table_ref):
+                create_table("dropped_email")
+            table = bigquery_client.get_table(table_ref)
+            get_metric_data("PQAnPe", tomorrow, today, tomorrow, "dropped_email", table)
+
+        if metric["id"] == "LSKEqT":
+            table_ref = dataset_ref.table("mark_as_spam")
+            if not tbl_exists(bigquery_client, table_ref):
+                create_table("mark_as_spam")
+            table = bigquery_client.get_table(table_ref)
+            get_metric_data("LSKEqT", tomorrow, today, tomorrow, "mark_as_spam", table)
+
+        if metric["id"] == "PFknxh":
+            table_ref = dataset_ref.table("open")
+            if not tbl_exists(bigquery_client, table_ref):
+                create_table("open")
+            table = bigquery_client.get_table(table_ref)
+            get_metric_data("PFknxh", tomorrow, today, tomorrow, "open", table)
+
+        if metric["id"] == "MSUv2N":
+            table_ref = dataset_ref.table("receive")
+            if not tbl_exists(bigquery_client, table_ref):
+                create_table("receive")
+            table = bigquery_client.get_table(table_ref)
+            get_metric_data("MSUv2N", tomorrow, today, tomorrow, "receive", table)
+
+        if metric["id"] == "NuiTPX":
+            table_ref = dataset_ref.table("subscribe_list")
+            if not tbl_exists(bigquery_client, table_ref):
+                create_table("subscribe_list")
+            table = bigquery_client.get_table(table_ref)
+            get_metric_data("NuiTPX", tomorrow, today, tomorrow, "subscribe_list", table)
+
+        if metric["id"] == "KrUvFp":
+            table_ref = dataset_ref.table("unsub_list")
+            if not tbl_exists(bigquery_client, table_ref):
+                create_table("unsub_list")
+            table = bigquery_client.get_table(table_ref)
+            get_metric_data("KrUvFp", tomorrow, today, tomorrow, "unsub_list", table)
+
+        if metric["id"] == "JtiJhM":
+            table_ref = dataset_ref.table("unsubscribe")
+            if not tbl_exists(bigquery_client, table_ref):
+                create_table("unsubscribe")
+            table = bigquery_client.get_table(table_ref)
+            get_metric_data("JtiJhM", tomorrow, today, tomorrow, "unsubscribe", table)
+
+        if metric["id"] == "Q3E8mF":
+            table_ref = dataset_ref.table("update_email_preferences")
+            if not tbl_exists(bigquery_client, table_ref):
+                create_table("update_email_preferences")
+            table = bigquery_client.get_table(table_ref)
+            get_metric_data("Q3E8mF", tomorrow, today, tomorrow, "update_email_preferences", table)
 
     # get_metric_data("K8vC8L", "2021/01/31", "2021/01/01", "2021/01/31", "bounce")
     # get_next_data("2021/03/23", "2021/03/23", "2021/03/20", "click")
@@ -2143,5 +2208,5 @@ def call_api(event, context):
     return "done"
 
 
-# if __name__ == '__main__':
-#     call_api()
+if __name__ == '__main__':
+    call_api("request")

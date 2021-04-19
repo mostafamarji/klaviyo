@@ -75,6 +75,8 @@ def get_metric_data(metrickey, sincedata, fromdate, todate, tablename, table):
         # await asyncio.sleep(1)
         r = json.dumps(metrics.data["data"])
         loaded_r = json.loads(r)
+        if len(loaded_r) == 0:
+            print("No data found " + tablename)
         # print(loaded_r)
         # get_table_properties(loaded_r)
         for i in loaded_r:
